@@ -1,0 +1,13 @@
+{
+  "name": "brave-stage-action-macos",
+  "version": "1.0.0",
+  "description": "Multi-stage Brave browser build action for macOS",
+  "dependencies": {
+    "@actions/artifact": "^2.2.1",
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/glob": "^0.5.0",
+    "@actions/io": "^1.1.3"
+  }
+}
+

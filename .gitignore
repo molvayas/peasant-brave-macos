@@ -1,0 +1,15 @@
+node_modules/
+.env
+*.log
+build-state.tar.zst
+brave-out-*.tar.xz
+*.tar.gz
+*.tar.xz
+*.dmg
+*.zip
+src/
+out/
+.gclient
+.gclient_entries
+brave-build/
+
