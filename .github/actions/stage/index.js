@@ -172,7 +172,7 @@ async function run() {
 
     let buildSuccess = false;
     const JOB_START_TIME = Date.now();
-    const MAX_JOB_TIME = 270 * 60 * 1000; // 4.5 hours
+    const MAX_JOB_TIME = 275 * 60 * 1000; 
 
     try {
         // Stage 1: npm run init
@@ -199,7 +199,7 @@ async function run() {
             const elapsedTime = Date.now() - JOB_START_TIME;
             let remainingTime = MAX_JOB_TIME - elapsedTime;
             // temporary to test if builds are resumed correctly
-            remainingTime = 11*60*1000
+            // remainingTime = 11*60*1000
             
             console.log('=== Stage: npm run build ===');
             console.log(`Time elapsed in job: ${(elapsedTime / 3600000).toFixed(2)} hours`);
@@ -230,6 +230,11 @@ async function run() {
                 
                 console.log('Syncing filesystem after timeout...');
                 await exec.exec('sync', [], {ignoreReturnCode: true});
+                await new Promise(r => setTimeout(r, 10000));
+
+                await exec.exec('sync', [], {ignoreReturnCode: true});
+                await new Promise(r => setTimeout(r, 10000));
+
             } else {
                 console.log(`✗ npm run build failed with code ${buildCode}`);
             }
@@ -291,8 +296,10 @@ async function run() {
         
         console.log('Syncing filesystem to flush all writes...');
         await exec.exec('sync', [], {ignoreReturnCode: true});
+        await new Promise(r => setTimeout(r, 10000));
         await exec.exec('sync', [], {ignoreReturnCode: true});
-        
+        await new Promise(r => setTimeout(r, 10000));
+
         const stateArchive = path.join(workDir, 'build-state.tar.zst');
         
         console.log('Archiving build state with gtar...');
@@ -324,4 +331,3 @@ async function run() {
 }
 
 run().catch(err => core.setFailed(err.message));
-
