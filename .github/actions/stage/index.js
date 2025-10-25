@@ -66,7 +66,7 @@ async function run() {
 
     // Install GNU tar and coreutils on EVERY job (fresh runner each time)
     console.log('Installing build dependencies via Homebrew...');
-    await exec.exec('brew', ['install', 'coreutils', 'gnu-tar'], {ignoreReturnCode: true});
+    await exec.exec('brew', ['install', 'coreutils'], {ignoreReturnCode: true});
     
     // Select appropriate Xcode version (26.0 preferred for Metal toolchain)
     console.log('Setting up Xcode environment...');
@@ -130,11 +130,11 @@ async function run() {
             
             await io.rmRF(downloadPath);
 
-            console.log('Installing npm dependencies...');
-            await exec.exec('npm', ['ci'], {
-                cwd: braveDir,
-                ignoreReturnCode: true
-            });
+            // console.log('Installing npm dependencies...');
+            // await exec.exec('npm', ['ci'], {
+            //     cwd: braveDir,
+            //     ignoreReturnCode: true
+            // });
         } catch (e) {
             console.error(`Failed to download artifact: ${e}`);
             throw e;
