@@ -68,9 +68,45 @@ async function run() {
     console.log('Installing build dependencies via Homebrew...');
     await exec.exec('brew', ['install', 'coreutils', 'gnu-tar'], {ignoreReturnCode: true});
     
-    // Install Metal toolchain for Xcode 26.0+
+    // Select appropriate Xcode version (26.0 preferred for Metal toolchain)
+    console.log('Setting up Xcode environment...');
+    const xcodeVersions = [
+        '/Applications/Xcode_26.0.app',
+        '/Applications/Xcode_16.3.app',
+        '/Applications/Xcode_16.2.app',
+        '/Applications/Xcode_16.1.app'
+    ];
+    
+    let xcodeSelected = false;
+    for (const xcodePath of xcodeVersions) {
+        try {
+            await fs.access(xcodePath);
+            console.log(`Found ${xcodePath}, selecting it...`);
+            await exec.exec('sudo', ['xcode-select', '--switch', xcodePath]);
+            console.log(`✅ Using ${xcodePath}`);
+            xcodeSelected = true;
+            break;
+        } catch (e) {
+            // Xcode version not found, try next
+        }
+    }
+    
+    if (!xcodeSelected) {
+        console.log('⚠️  No preferred Xcode version found, using default');
+        await exec.exec('ls', ['-la', '/Applications/Xcode*.app/'], {ignoreReturnCode: true});
+    }
+    
+    // Show current Xcode configuration
+    await exec.exec('xcode-select', ['--print-path'], {ignoreReturnCode: true});
+    await exec.exec('xcodebuild', ['-version'], {ignoreReturnCode: true});
+    
+    // Install Metal toolchain for Xcode 26.0+ (may not work on all Xcode versions)
     console.log('Installing Metal toolchain...');
     await exec.exec('xcodebuild', ['-downloadComponent', 'MetalToolchain'], {ignoreReturnCode: true});
+    
+    // Verify Metal toolchain installation
+    console.log('Verifying Metal toolchain...');
+    await exec.exec('xcrun', ['-f', 'metal'], {ignoreReturnCode: true});
 
     try {
         await io.mkdirP(srcDir);
